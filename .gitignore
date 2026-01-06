@@ -1,0 +1,96 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+!.env.example
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+/src/generated/prisma
+
+# pm2 logs
+/logs
+
+# ============================================
+# OPERATIONAL FILES (NOT FOR PUBLIC REPO)
+# ============================================
+
+# Deployment & Scripts
+ecosystem.config.js
+prisma.config.ts
+notify-telegram.sh
+deploy-*.sh
+refactor-*.sh
+replace-*.sh
+scripts/
+freeradius/
+sql/
+
+# Backups
+backups/
+*.backup
+*.zip
+
+# Test & Debug Files
+test-*.ts
+test-*.sql
+check-*.ts
+fix-*.ts
+sync-*.ts
+nohup.out
+
+# pfSense configs
+pfsense-*
+
+# Non-source lib folder (if not source code)
+/lib/
+
+# Documentation (operational docs only)
+docs/
+
+# Internal documentation files (keep local only)
+CORE_MODULES_DOCUMENTATION.md
+DEPLOYMENT.md
+DEPLOYMENT_TIMEZONE_MIGRATION.md
+memkREADME.md
+MINOR_FIXES_APPLIED.md
+RATE_LIMITING.md
+README.old.md
+SUDOERS_SETUP.md
+TIMEZONE_AUDIT_REPORT.md
+TIMEZONE_MIGRATION.md
