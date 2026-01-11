@@ -31,7 +31,6 @@ export default function CustomerLoginPage() {
     setError('');
 
     try {
-      // First check if OTP is enabled
       const checkRes = await fetch('/api/customer/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -41,12 +40,11 @@ export default function CustomerLoginPage() {
       const checkData = await checkRes.json();
 
       if (!checkData.success) {
-        setError(checkData.error || 'Nomor tidak terdaftar');
+        setError(checkData.error || 'Phone number not registered');
         setLoading(false);
         return;
       }
 
-      // If OTP is disabled, login directly
       if (!checkData.requireOTP) {
         localStorage.setItem('customer_token', checkData.token);
         localStorage.setItem('customer_user', JSON.stringify(checkData.user));
@@ -54,7 +52,6 @@ export default function CustomerLoginPage() {
         return;
       }
 
-      // If OTP is enabled, send OTP
       const res = await fetch('/api/customer/auth/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -67,10 +64,10 @@ export default function CustomerLoginPage() {
         setExpiresIn(data.expiresIn || 5);
         setStep('otp');
       } else {
-        setError(data.error || 'Gagal mengirim OTP');
+        setError(data.error || 'Failed to send OTP');
       }
-    } catch (err: any) {
-      setError('Terjadi kesalahan. Silakan coba lagi.');
+    } catch {
+      setError('An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -91,17 +88,14 @@ export default function CustomerLoginPage() {
       const data = await res.json();
 
       if (data.success) {
-        // Save token to localStorage
         localStorage.setItem('customer_token', data.token);
         localStorage.setItem('customer_user', JSON.stringify(data.user));
-        
-        // Redirect to customer dashboard
         router.push('/customer');
       } else {
-        setError(data.error || 'Kode OTP salah');
+        setError(data.error || 'Invalid OTP code');
       }
-    } catch (err: any) {
-      setError('Terjadi kesalahan. Silakan coba lagi.');
+    } catch {
+      setError('An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -116,7 +110,6 @@ export default function CustomerLoginPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* Logo & Title */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl shadow-lg shadow-blue-500/30 mb-4">
             <Shield className="w-8 h-8 text-white" />
@@ -129,7 +122,6 @@ export default function CustomerLoginPage() {
           </p>
         </div>
 
-        {/* Login Form */}
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-6 sm:p-8">
           {error && (
             <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
@@ -142,7 +134,7 @@ export default function CustomerLoginPage() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   <Smartphone className="w-4 h-4 inline mr-2" />
-                  Nomor WhatsApp Terdaftar
+                  Registered Phone Number
                 </label>
                 <input
                   type="tel"
@@ -154,7 +146,7 @@ export default function CustomerLoginPage() {
                   disabled={loading}
                 />
                 <p className="text-xs text-gray-500 mt-2">
-                  Masukkan nomor HP yang terdaftar di sistem
+                  Enter the phone number registered in the system
                 </p>
               </div>
 
@@ -166,11 +158,11 @@ export default function CustomerLoginPage() {
                 {loading ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin" />
-                    Memproses...
+                    Processing...
                   </>
                 ) : (
                   <>
-                    Masuk
+                    Login
                     <ArrowRight className="w-5 h-5" />
                   </>
                 )}
@@ -181,7 +173,7 @@ export default function CustomerLoginPage() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   <Lock className="w-4 h-4 inline mr-2" />
-                  Kode OTP
+                  OTP Code
                 </label>
                 <input
                   type="text"
@@ -195,9 +187,9 @@ export default function CustomerLoginPage() {
                   autoFocus
                 />
                 <p className="text-xs text-gray-500 mt-2 text-center">
-                  Kode OTP telah dikirim ke <strong>{phone}</strong>
+                  OTP code sent to <strong>{phone}</strong>
                   <br />
-                  Berlaku selama {expiresIn} menit
+                  Valid for {expiresIn} minutes
                 </p>
               </div>
 
@@ -208,7 +200,7 @@ export default function CustomerLoginPage() {
                   disabled={loading}
                   className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition disabled:opacity-50"
                 >
-                  Kembali
+                  Back
                 </button>
                 <button
                   type="submit"
@@ -218,10 +210,10 @@ export default function CustomerLoginPage() {
                   {loading ? (
                     <>
                       <Loader2 className="w-5 h-5 animate-spin" />
-                      Verifikasi...
+                      Verifying...
                     </>
                   ) : (
-                    'Verifikasi'
+                    'Verify'
                   )}
                 </button>
               </div>
@@ -236,15 +228,14 @@ export default function CustomerLoginPage() {
                 disabled={loading}
                 className="w-full text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 disabled:opacity-50"
               >
-                Kirim ulang kode OTP
+                Resend OTP code
               </button>
             </form>
           )}
         </div>
 
-        {/* Footer */}
         <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
-          By AIBILL RADIUS
+          Powered by MWAKIDENIS-BILLING RADIUS
         </p>
       </div>
     </div>
